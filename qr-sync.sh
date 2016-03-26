@@ -7,34 +7,30 @@
 [ -d "$1" ] || return 1
 DIR="$1"
 
-for i in `ls $DIR/ | grep ".jpg$"`; do
-
-	f=serial.txt
-	n="`basename $DIR/$i | sed 's%\..\+$%%'`"
-	info="$(cd $DIR && file $i | sed 's%,%\n%g')"
+IMAGES=(`ls $DIR/ | grep ".jpg$" | sort -n`)
+for ((i = 0; i < ${#IMAGES[@]}; i++)); do
+	# f=serial.txt
+	img="${DIR}/${IMAGES[$i]}"
+	n="`basename -s '.jpg' ${img}`"
+	info="$(cd $DIR && file -b $img | sed 's%,%\n%g')"
 	h="${n}.html"
 
-	let p=n-1
-	let q=n+1
-	read SER < $f
+	echo $i ${IMAGES[$i]} >&2
 
-	# Previous page or index.
-	# [[ $p -lt 1 ]] && p="" || p="${p}.html"
-	[ -f "${DIR}/${p}.jpg" ] && p="${p}.html" || p=""
-
-	# Next page or index.
-	# [[ $q -gt $SER ]] && q="" || q="${q}.html"
-	[ -f "${DIR}/${q}.jpg" ] && q="${q}.html" || q=""
+	[ $i -gt 0 ] \
+		&& p="`basename ${IMAGES[$(($i - 1))]} | sed 's/\.jpg$/\.html/'`" || p=""
+	[ $i -lt $((${#IMAGES[@]} - 1)) ] \
+		&& q="`basename ${IMAGES[$(($i + 1))]} | sed 's/\.jpg$/\.html/'`" || q=""
 
 	cat <<-EOF > $DIR/$h
 <!DOCTYPE html>
 
 <!--
    __     ______     __     __  __     __  __
-  /\ \   /\  ___\   /\ \   /\ \_\ \   /\ \_\ \
- _\_\ \  \ \  __\  _\_\ \  \ \  __ \  \ \  __ \
-/\_____\  \ \_\   /\_____\  \ \_\ \_\  \ \_\ \_\
-\/_____/   \/_/   \/_____/   \/_/\/_/   \/_/\/_/
+  /\\ \\   /\\  ___\\   /\\ \\   /\\ \\_\\ \\   /\\ \\_\\ \\
+ _\\_\\ \\  \\ \\  __\\  _\\_\\ \\  \\ \\  __ \\  \\ \\  __ \\
+/\\_____\\  \\ \\_\\   /\\_____\\  \\ \\_\\ \\_\\  \\ \\_\\ \\_\\
+\\/_____/   \\/_/   \\/_____/   \\/_/\\/_/   \\/_/\\/_/
 -->
 
 <html>
@@ -44,13 +40,14 @@ for i in `ls $DIR/ | grep ".jpg$"`; do
 		<link rel="stylesheet" type="text/css" href="/css/scan.css" />
 	</head>
 	<body>
-		<a class="image" href="/s/$i">
-			<h1>$i</h1>
-			<img src="/s/$i" alt="Scanned Image $n"
+		<a class="image" href="/s/${n}.jpg">
+			<h1>Scan ${n}</h1>
+			<img src="/s/${n}.jpg" alt="Scanned Image $n"
 			title="Updated: `date -I`" height="100%" width="100%"/>
 			<h3>Click to Enlarge.</h3>
 			<h2>
-				<a href="/s/${p}">&lt;= Previous</a> ::
+				<a href="/s/${p}">&lt;= Previous</a>
+				&nbsp;<a href="/s/">::</a>&nbsp;
 				<a href="/s/${q}">Next =&gt;</a>
 			</h2>
 		</a>
