@@ -8,6 +8,10 @@
 DIR="$1"
 
 IMAGES=(`ls $DIR/ | grep ".jpg$" | sort -n`)
+
+FIRST=`basename ${IMAGES[0]} | sed 's/\.jpg$/\.html/'`
+LAST=`basename ${IMAGES[$((${#IMAGES[@]} - 1))]} | sed 's/\.jpg$/\.html/'`
+
 for ((i = 0; i < ${#IMAGES[@]}; i++)); do
 	# f=serial.txt
 	img="${DIR}/${IMAGES[$i]}"
@@ -46,9 +50,12 @@ for ((i = 0; i < ${#IMAGES[@]}; i++)); do
 			title="Updated: `date -I`" height="100%" width="100%"/>
 			<h3>Click to Enlarge.</h3>
 			<h2>
-				<a href="/s/${p}">&lt;= Previous</a>
-				&nbsp;<a href="/s/">::</a>&nbsp;
-				<a href="/s/${q}">Next =&gt;</a>
+				<a href="/s/${FIRST}">&lt;&lt;</a>
+				&nbsp;<a href="/s/${p}">&lt;= Previous</a>
+				<br />
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/s/">::</a>
+				&nbsp;<a href="/s/${q}">Next =&gt;</a>
+				&nbsp;<a href="/s/${LAST}">&gt;&gt;</a>
 			</h2>
 		</a>
 		<div class="info"><pre><code>$info</code></pre></div>
