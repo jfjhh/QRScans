@@ -13,10 +13,9 @@ FIRST=`basename ${IMAGES[0]} | sed 's/\.jpg$/\.html/'`
 LAST=`basename ${IMAGES[$((${#IMAGES[@]} - 1))]} | sed 's/\.jpg$/\.html/'`
 
 for ((i = 0; i < ${#IMAGES[@]}; i++)); do
-	# f=serial.txt
 	img="${DIR}/${IMAGES[$i]}"
 	n="`basename -s '.jpg' ${img}`"
-	info="$(cd $DIR && file -b $img | sed 's%,%\n%g')"
+	info="$(cd $DIR && file -b ${IMAGES[$i]} | sed 's%,%\n%g')"
 	h="${n}.html"
 
 	echo $i ${IMAGES[$i]} >&2
