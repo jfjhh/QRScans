@@ -95,7 +95,7 @@ for ((i = 0; i < ${#IMAGES[@]}; i++)); do
 	cat <<-EOF >> $INDEX
 <!-- Thumbnail for image ${n}. -->
 <div class="thumb">
-	<a class="image" href="/s/${n}.jpg">
+	<a class="image" href="/s/${n}.html">
 		<img src="/s/${t}" alt="Scanned Image $n"
 		title="Updated: `date -I`" />
 	</a>
